@@ -1,0 +1,36 @@
+service:
+  name: java-app
+  identifier: javaapp
+  serviceDefinition:
+    type: Kubernetes
+    spec:
+      manifests:
+        - manifest:
+            identifier: labservicemanifest
+            type: K8sManifest
+            spec:
+              store:
+                type: Github
+                spec:
+                  connectorRef: algithub
+                  gitFetchType: Branch
+                  paths:
+                    - https://github.com/kunalnano/Harness-CD-Training/blob/main/basic/deployment.yaml
+                  repoName: https://github.com/kunalnano/Harness-CD-Training
+                  branch: main
+              skipResourceVersioning: false
+              enableDeclarativeRollback: false
+      artifacts:
+        primary:
+          primaryArtifactRef: <+input>
+          sources:
+            - spec:
+                connectorRef: dockeral
+                imagePath: alsharma9/harness-ci-bootcamp
+                tag: <+input>
+                digest: ""
+              identifier: harnesscibootcamp
+              type: DockerRegistry
+  gitOpsEnabled: false
+  orgIdentifier: TPM
+  projectIdentifier: Al
