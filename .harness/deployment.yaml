@@ -15,7 +15,7 @@ service:
                   connectorRef: algithub
                   gitFetchType: Branch
                   paths:
-                    - https://github.com/kunalnano/Harness-CD-Training/blob/main/basic/deployment.yaml
+                    - https://github.com/kunalnano/Harness-CD-Training/blob/main/entities/service.yaml
                   repoName: https://github.com/kunalnano/Harness-CD-Training
                   branch: main
               skipResourceVersioning: false
