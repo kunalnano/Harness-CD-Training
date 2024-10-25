@@ -1,0 +1,9 @@
+service:
+  name: java_build
+  identifier: java_build
+  serviceDefinition:
+    type: Kubernetes
+    spec: {}
+  gitOpsEnabled: false
+  orgIdentifier: TPM
+  projectIdentifier: Al
