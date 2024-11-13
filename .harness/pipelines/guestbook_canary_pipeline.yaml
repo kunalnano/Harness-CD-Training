@@ -1,0 +1,82 @@
+pipeline:
+  identifier: guestbook_canary_pipeline
+  name: guestbook_canary_pipeline
+  orgIdentifier: TPMLabs
+  projectIdentifier: testal
+  stages:
+    - stage:
+        description: ""
+        failureStrategies:
+          - onFailure:
+              action:
+                type: StageRollback
+              errors:
+                - AllErrors
+        identifier: deployguestbook
+        name: deploy-guestbook
+        spec:
+          deploymentType: Kubernetes
+          environment:
+            environmentRef: sandboxenvpxlklunfwryyrpnsukgf
+            deployToAll: false
+            infrastructureDefinitions:
+              - identifier: test
+          execution:
+            rollbackSteps:
+              - step:
+                  identifier: rollbackCanaryDelete
+                  name: Canary Delete
+                  spec: {}
+                  timeout: 10m
+                  type: K8sCanaryDelete
+              - step:
+                  identifier: rollingRollback
+                  name: Rolling Rollback
+                  spec: {}
+                  timeout: 10m
+                  type: K8sRollingRollback
+            steps:
+              - stepGroup:
+                  identifier: canaryDepoyment
+                  name: Canary Deployment
+                  steps:
+                    - step:
+                        identifier: canaryDeployment
+                        name: Canary Deployment
+                        spec:
+                          instanceSelection:
+                            spec:
+                              count: 1
+                            type: Count
+                          skipDryRun: false
+                        timeout: 10m
+                        type: K8sCanaryDeploy
+                    - step:
+                        identifier: canaryDelete
+                        name: Canary Delete
+                        spec: {}
+                        timeout: 10m
+                        type: K8sCanaryDelete
+              - stepGroup:
+                  identifier: primaryDepoyment
+                  name: Primary Deployment
+                  steps:
+                    - step:
+                        identifier: rollingDeployment
+                        name: Rolling Deployment
+                        spec:
+                          skipDryRun: false
+                        timeout: 10m
+                        type: K8sRollingDeploy
+          service:
+            serviceRef: harnessguestbook
+        tags: {}
+        type: Deployment
+  tags: {}
+  properties:
+    ci:
+      codebase:
+        connectorRef: test_al
+        repoName: Harness-CD-Training
+        build: <+input>
+        sparseCheckout: []
